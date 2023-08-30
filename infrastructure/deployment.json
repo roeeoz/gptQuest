@@ -11,7 +11,7 @@
         },
         "HostingPlanSku": {
             "type": "string",
-            "defaultValue": "B3",
+            "defaultValue": "S3",
             "allowedValues": [
                 "F1",
                 "D1",
@@ -253,7 +253,7 @@
         }
     },
     "variables": {
-        "WebAppImageName": "DOCKER|fruoccopublic.azurecr.io/sample-app-aoai-chatgpt:latest",
+        "WebAppImageName": "DOCKER|fruoccopublic.azurecr.io/gptQuest:latest",
         "cosmosdb_account_name": "[format('db-{0}', parameters('WebsiteName'))]",
         "cosmosdb_database_name": "db_conversation_history",
         "cosmosdb_container_name": "conversations",

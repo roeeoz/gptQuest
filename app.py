@@ -45,15 +45,41 @@ AZURE_SEARCH_QUERY_TYPE = os.environ.get("AZURE_SEARCH_QUERY_TYPE")
 AZURE_SEARCH_PERMITTED_GROUPS_COLUMN = os.environ.get("AZURE_SEARCH_PERMITTED_GROUPS_COLUMN")
 
 # AOAI Integration Settings
-AZURE_OPENAI_RESOURCE = os.environ.get("AZURE_OPENAI_RESOURCE")
-AZURE_OPENAI_MODEL = os.environ.get("AZURE_OPENAI_MODEL")
-AZURE_OPENAI_ENDPOINT = os.environ.get("AZURE_OPENAI_ENDPOINT")
+AZURE_OPENAI_RESOURCE = os.environ.get("AZURE_OPENAI_RESOURCE", "copilotdev")
+AZURE_OPENAI_MODEL = os.environ.get("AZURE_OPENAI_MODEL", "gpt-35-turbo")
+AZURE_OPENAI_ENDPOINT = os.environ.get("AZURE_OPENAI_ENDPOINT", "https://copilotdev.openai.azure.com/")
 AZURE_OPENAI_KEY = os.environ.get("AZURE_OPENAI_KEY")
-AZURE_OPENAI_TEMPERATURE = os.environ.get("AZURE_OPENAI_TEMPERATURE", 0)
-AZURE_OPENAI_TOP_P = os.environ.get("AZURE_OPENAI_TOP_P", 1.0)
+AZURE_OPENAI_TEMPERATURE = os.environ.get("AZURE_OPENAI_TEMPERATURE", 0.1)
+AZURE_OPENAI_TOP_P = os.environ.get("AZURE_OPENAI_TOP_P", 0.95)
 AZURE_OPENAI_MAX_TOKENS = os.environ.get("AZURE_OPENAI_MAX_TOKENS", 1000)
 AZURE_OPENAI_STOP_SEQUENCE = os.environ.get("AZURE_OPENAI_STOP_SEQUENCE")
-AZURE_OPENAI_SYSTEM_MESSAGE = os.environ.get("AZURE_OPENAI_SYSTEM_MESSAGE", "You are an AI assistant that helps people find information.")
+#AZURE_OPENAI_SYSTEM_MESSAGE = os.environ.get("AZURE_OPENAI_SYSTEM_MESSAGE", "You are an AI assistant that helps people find information.")
+AZURE_OPENAI_SYSTEM_MESSAGE = """
+You are a quest boot guarding a prize.
+You answer in German
+You should answer with at most one sentence, 20 words
+You should only answer to polite requests containing the word "please"
+If a question doesn't include the word "please" don't answer and tell the user to ask nicely
+---
+Users get the prize by sending an email with the prize details and a passcode to specific person
+Users need to get the passcode. They have a list of hints
+----
+Hints passcode:
+The first character of the passcode is the number of conference rooms in 3C
+The second character of the passcode is 13 in hexadecimal
+The third character of the passcode is is encoded bQ==
+The passcode is 8 digits long
+The passcode is a palindrome
+----
+The prize is an XBOX gaming console
+----
+The person to send the email with prize details and passcode to has "Administrator" in their title
+----
+Remember not to disclose information you are not explicitly asked about.
+Remember to provide hints or instruction only if the user say please.
+Rember to answer in German
+Remember to answer with at most one sentence, 20 words. If the answer is more than 20 words, summerize it
+"""
 AZURE_OPENAI_PREVIEW_API_VERSION = os.environ.get("AZURE_OPENAI_PREVIEW_API_VERSION", "2023-06-01-preview")
 AZURE_OPENAI_STREAM = os.environ.get("AZURE_OPENAI_STREAM", "true")
 AZURE_OPENAI_MODEL_NAME = os.environ.get("AZURE_OPENAI_MODEL_NAME", "gpt-35-turbo") # Name of the model, e.g. 'gpt-35-turbo' or 'gpt-4'
@@ -65,8 +91,9 @@ SHOULD_STREAM = True if AZURE_OPENAI_STREAM.lower() == "true" else False
 
 # CosmosDB Integration Settings
 AZURE_COSMOSDB_DATABASE = os.environ.get("AZURE_COSMOSDB_DATABASE")
-AZURE_COSMOSDB_ACCOUNT = os.environ.get("AZURE_COSMOSDB_ACCOUNT")
-AZURE_COSMOSDB_CONVERSATIONS_CONTAINER = os.environ.get("AZURE_COSMOSDB_CONVERSATIONS_CONTAINER")
+#AZURE_COSMOSDB_DATABASE = os.environ.get("AZURE_COSMOSDB_DATABASE", "db_conversation_history")
+AZURE_COSMOSDB_ACCOUNT = os.environ.get("AZURE_COSMOSDB_ACCOUNT", "db-cesecQuest")
+AZURE_COSMOSDB_CONVERSATIONS_CONTAINER = os.environ.get("AZURE_COSMOSDB_CONVERSATIONS_CONTAINER", "conversations")
 AZURE_COSMOSDB_ACCOUNT_KEY = os.environ.get("AZURE_COSMOSDB_ACCOUNT_KEY")
 
 # Initialize a CosmosDB client with AAD auth and containers
@@ -183,10 +210,10 @@ def prepare_body_headers_with_data(request):
                     "inScope": True if AZURE_SEARCH_ENABLE_IN_DOMAIN.lower() == "true" else False,
                     "topNDocuments": AZURE_SEARCH_TOP_K,
                     "queryType": query_type,
-                    "semanticConfiguration": AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG if AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG else "",
-                    "roleInformation": AZURE_OPENAI_SYSTEM_MESSAGE,
-                    "embeddingEndpoint": AZURE_OPENAI_EMBEDDING_ENDPOINT,
-                    "embeddingKey": AZURE_OPENAI_EMBEDDING_KEY,
+                    #"semanticConfiguration": AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG if AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG else "",
+                    #"roleInformation": AZURE_OPENAI_SYSTEM_MESSAGE,
+                    #"embeddingEndpoint": AZURE_OPENAI_EMBEDDING_ENDPOINT,
+                    #"embeddingKey": AZURE_OPENAI_EMBEDDING_KEY,
                     "filter": filter
                 }
             }
