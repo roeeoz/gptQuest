@@ -24,9 +24,8 @@ Please see the [section below](#add-an-identity-provider) for important informat
 1. Update the environment variables listed in `app.py` as described in the [Environment variables](#environment-variables) section.
     
     These variables are required:
-    - `AZURE_OPENAI_RESOURCE`
-    - `AZURE_OPENAI_MODEL`
     - `AZURE_OPENAI_KEY`
+    - `PASSCODE`
 
     These variables are optional:
     - `AZURE_OPENAI_TEMPERATURE`
@@ -129,6 +128,7 @@ Note: settings starting with `AZURE_SEARCH` are only needed when using Azure Ope
 | App Setting | Value | Note |
 | --- | --- | ------------- |
 |AZURE_SEARCH_SERVICE||The name of your Azure Cognitive Search resource|
+|PASSCODE||passcode|
 |AZURE_SEARCH_INDEX||The name of your Azure Cognitive Search Index|
 |AZURE_SEARCH_KEY||An **admin key** for your Azure Cognitive Search resource|
 |AZURE_SEARCH_USE_SEMANTIC_SEARCH|False|Whether or not to use semantic search|

@@ -28,6 +28,7 @@ param searchTitleColumn string = 'title'
 param searchUrlColumn string = 'url'
 
 param openAiResourceName string = ''
+param passcode string = ''
 param openAiResourceGroupName string = ''
 param openAiResourceGroupLocation string = location
 param openAiSkuName string = ''
@@ -110,6 +111,7 @@ module backend 'core/host/appservice.bicep' = {
     authClientId: authClientId
     authIssuerUri: authIssuerUri
     appSettings: {
+      PASSCODE: passcode
       // search
       AZURE_SEARCH_INDEX: searchIndexName
       AZURE_SEARCH_SERVICE: searchService.outputs.name

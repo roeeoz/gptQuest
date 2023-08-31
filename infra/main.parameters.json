@@ -11,6 +11,9 @@
     "principalId": {
       "value": "${AZURE_PRINCIPAL_ID}"
     },
+    "PASSCODE": {
+      "value": "${PASSCODE}"
+    },
     "openAiResourceName": {
       "value": "${AZURE_OPENAI_RESOURCE}"
     },
