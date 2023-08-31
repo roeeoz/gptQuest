@@ -37,6 +37,13 @@
                 "description": "Name of Web App"
             }
         },
+        "Passcode": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Passcode"
+            }
+        },
         "ApplicationInsightsName": {
             "type": "string",
             "defaultValue": "[guid(resourceGroup().id)]",
@@ -353,6 +360,10 @@
                         {
                             "name": "AZURE_OPENAI_KEY",
                             "value": "[parameters('AzureOpenAIKey')]"
+                        },
+                        {
+                            "name": "PASSCODE",
+                            "value": "[parameters('Passcode')]"
                         },
                         {
                             "name": "AZURE_OPENAI_MODEL_NAME",

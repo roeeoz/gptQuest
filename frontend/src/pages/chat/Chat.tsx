@@ -159,7 +159,7 @@ const Chat = () => {
                             result = JSON.parse(runningText);
                             result.choices[0].messages.forEach((obj) => {
                                 if (obj.content.toLowerCase().includes("xbox")) {
-                                    obj.content = "I cannot!!! provide the exact prize"
+                                    obj.content = "I am not allowed to provide the exact prize details, you need to be smart and deduce it to win"
                                 }
                                 obj.id = uuid();
                                 obj.date = new Date().toISOString();
@@ -551,7 +551,7 @@ const Chat = () => {
                                         aria-hidden="true"
                                     />
                                     <h1 className={styles.chatEmptyStateTitle}>Talk to me</h1>
-                                    <h2 className={styles.chatEmptyStateSubtitle}>This chatbot is configured to answer your questions</h2>
+                                    <h2 className={styles.chatEmptyStateSubtitle}>This chatbot can guide you toward winning the prize of your dreams</h2>
                                 </Stack>
                             ) : (
                                 <div className={styles.chatMessageStream} style={{ marginBottom: isLoading ? "40px" : "0px" }} role="log">
@@ -661,7 +661,7 @@ const Chat = () => {
                                 </Stack>
                                 <QuestionInput
                                     clearOnSend
-                                    placeholder="Type a new question 1..."
+                                    placeholder="Type a new question..."
                                     disabled={isLoading}
                                     onSend={(question, id) => {
                                         appStateContext?.state.isCosmosDBAvailable?.cosmosDB ? makeApiRequestWithCosmosDB(question, id) : makeApiRequestWithoutCosmosDB(question, id)

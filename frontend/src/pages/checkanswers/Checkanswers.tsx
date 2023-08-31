@@ -26,9 +26,29 @@ class Checkanswers extends React.Component<any, any> {
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
     }
-  
+
+    componentDidMount() {
+      fetch('/code')
+      .then((response) => response.text())
+      .then(code => {
+        this.setState({ code: code });
+      });
+  }
+
     handleChange(event: any) {
-      this.setState({value: event.target.value});
+      var value = event.target.value;
+      var status
+      var color
+      if (!value || !this.state.code) {
+        status = ''
+      } else if (value == this.state.code) {
+        status = 'correct :-)'
+        color = 'green'
+      } else {
+        status = 'wrong ;-('
+        color = 'red'
+      }
+      this.setState({...this.state, value: value, status: status, color: color});
     }
   
     handleSubmit(event: any) {
@@ -39,11 +59,13 @@ class Checkanswers extends React.Component<any, any> {
     render() {
       return (
         <form onSubmit={this.handleSubmit}>
-          <label>
-            Name:
-            <input type="text" value={this.state.value} onChange={this.handleChange} />
-          </label>
-          <input type="submit" value="Submit" />
+          <Stack horizontal>
+            <label>
+              Try your passcode:
+              <input type="text" value={this.state.value} onChange={this.handleChange} />
+            </label>
+            <input readOnly type="text" value={this.state.status} style={{color: this.state.color}} />
+          </Stack>
         </form>
       );
     }
