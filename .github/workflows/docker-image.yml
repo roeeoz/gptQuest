@@ -25,8 +25,6 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build the Docker image
       run:         
-        docker build . --file WebApp.Dockerfile --tag fruoccopublic.azurecr.io/gptQuest:$(date +'%Y-%m-%d')_$GITHUB_RUN_NUMBER;
-        docker tag fruoccopublic.azurecr.io/gptQuest:$(date +'%Y-%m-%d')_$GITHUB_RUN_NUMBER fruoccopublic.azurecr.io/gptQuest:latest;
-        docker push fruoccopublic.azurecr.io/gptQuest:$(date +'%Y-%m-%d')_$GITHUB_RUN_NUMBER;
-        docker push fruoccopublic.azurecr.io/gptQuest:latest;
+        docker build . --file WebApp.Dockerfile --tag roozcontainerregistry.azurecr.io/gptquest:latest;
+        docker push roozcontainerregistry.azurecr.io/gptquest:latest;
       

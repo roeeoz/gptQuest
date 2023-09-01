@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useContext, useLayoutEffect } from "react";
-import { CommandBarButton, IconButton, Dialog, DialogType, Stack } from "@fluentui/react";
+import { CommandBarButton, IconButton, Dialog, DialogType, Stack, IStackTokens } from "@fluentui/react";
 import { DismissRegular, SquareRegular, ShieldLockRegular, ErrorCircleRegular } from "@fluentui/react-icons";
 
 import ReactMarkdown from "react-markdown";
@@ -55,11 +55,15 @@ class Checkanswers extends React.Component<any, any> {
       alert('A name was submitted: ' + this.state.value);
       event.preventDefault();
     }
-  
+
     render() {
+      var horizontalGapStackTokens: IStackTokens = {
+        childrenGap: 10,
+        padding: 10,
+      };
       return (
         <form onSubmit={this.handleSubmit}>
-          <Stack horizontal>
+          <Stack horizontal tokens={horizontalGapStackTokens}>
             <label>
               Try your passcode:
               <input type="text" value={this.state.value} onChange={this.handleChange} />
