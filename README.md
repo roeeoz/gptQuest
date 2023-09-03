@@ -6,13 +6,6 @@ This repo contains sample code for a simple chat webapp that integrates with Azu
 - An existing Azure OpenAI resource and model deployment of a chat model (e.g. `gpt-35-turbo`, `gpt-4`)
 - To use Azure OpenAI on your data: an existing Azure Cognitive Search resource and index.
 
-## Deploy the app
-You should have an app services which is configured to pull and has authentication configured
-az acr login -n roozcontainerregistry
-docker build . --file WebApp.Dockerfile --tag roozcontainerregistry.azurecr.io/gptquest:latest;
-docker push roozcontainerregistry.azurecr.io/gptquest:latest;
-
-
 ### Deploy from your local machine
 
 #### Local Setup: Basic Chat Experience
@@ -25,6 +18,12 @@ docker push roozcontainerregistry.azurecr.io/gptquest:latest;
 2. Start the app with `start.cmd`. This will build the frontend, install backend dependencies, and then start the app.
 
 3. You can see the local running app at http://127.0.0.1:5000.
+
+## Deploy the app
+You should have an app services which is configured to pull and has authentication configured
+az acr login -n roozcontainerregistry
+docker build . --file WebApp.Dockerfile --tag roozcontainerregistry.azurecr.io/gptquest:latest;
+docker push roozcontainerregistry.azurecr.io/gptquest:latest;
 
 ### Add an identity provider
 After deployment, you will need to add an identity provider to provide authentication support in your app. See [this tutorial](https://learn.microsoft.com/en-us/azure/app-service/scenario-secure-app-authentication-app-service) for more information.
