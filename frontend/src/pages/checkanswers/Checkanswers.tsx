@@ -23,37 +23,32 @@ class Checkanswers extends React.Component<any, any> {
       super(props);
       this.state = {value: ''};
   
+      this.handleClick = this.handleClick.bind(this);
       this.handleChange = this.handleChange.bind(this);
-      this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    componentDidMount() {
-      fetch('/code')
+  handleClick(event: any) {
+    const headers = new Headers();
+    headers.append('Content-Type', 'text/plain');
+    fetch('/code', {
+      headers: headers,
+      method: "POST",
+      body: this.state.code
+      })
       .then((response) => response.text())
-      .then(code => {
-        this.setState({ code: code });
+      .then(result => {
+        let status = 'wrong ;-('
+        let color = 'red'
+        if (result === 'True') {
+          status = 'correct :-)'
+          color = 'green'
+        } 
+        this.setState({...this.state, status: status, color: color});
       });
-  }
-
-    handleChange(event: any) {
-      var value = event.target.value;
-      var status
-      var color
-      if (!value || !this.state.code) {
-        status = ''
-      } else if (value == this.state.code) {
-        status = 'correct :-)'
-        color = 'green'
-      } else {
-        status = 'wrong ;-('
-        color = 'red'
-      }
-      this.setState({...this.state, value: value, status: status, color: color});
     }
   
-    handleSubmit(event: any) {
-      alert('A name was submitted: ' + this.state.value);
-      event.preventDefault();
+    handleChange(event: any) {
+      this.setState({...this.state, code: event.target.value});
     }
 
     render() {
@@ -62,15 +57,18 @@ class Checkanswers extends React.Component<any, any> {
         padding: 10,
       };
       return (
-        <form onSubmit={this.handleSubmit}>
+        <Stack>
           <Stack horizontal tokens={horizontalGapStackTokens}>
             <label>
               Try your passcode:
-              <input type="text" value={this.state.value} onChange={this.handleChange} />
+              <input type="text" name="code" onChange={this.handleChange}/>
             </label>
-            <input readOnly type="text" value={this.state.status} style={{color: this.state.color}} />
+            <input type="button" value="Check you answer!" onClick={this.handleClick} />
           </Stack>
-        </form>
+          {this.state.status && (
+                <div style={{color: this.state.color}}>{this.state.status}</div>
+          )}
+        </Stack>
       );
     }
   }

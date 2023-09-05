@@ -376,9 +376,11 @@ def conversation_without_data(request_body):
     else:
         return Response(stream_without_data(response, history_metadata), mimetype='text/event-stream')
 
-@app.route("/code", methods=["GET"])
+@app.route("/code", methods=["POST"])
 def passcode():
-    return PASSCODE, 200
+    text_body = request.data.decode('utf-8') 
+    result = str(text_body == PASSCODE)
+    return result, 200
 
 @app.route("/conversation", methods=["GET", "POST"])
 def conversation():
