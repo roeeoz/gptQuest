@@ -13,6 +13,7 @@ import { AppStateProvider } from "./state/AppProvider";
 initializeIcons();
 
 export default function App() {
+    
     return (
         <AppStateProvider>
             <HashRouter>

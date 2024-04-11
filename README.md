@@ -42,3 +42,16 @@ trademarks or logos is subject to and must follow
 [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.
+
+ROEE
+
+Default LLM: copilotdev - Rome-MDC-Copilot-Dev
+https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource/subscriptions/29db5731-b1aa-4893-b02f-88848593d486/resourceGroups/Backend/providers/Microsoft.CognitiveServices/accounts/copilotdev/
+
+LLM2: eliLLM - ASC DEMO - 212f9889-769e-45ae-ab43-6da33674bd26
+https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource/subscriptions/212f9889-769e-45ae-ab43-6da33674bd26/resourceGroups/eliLLM/providers/Microsoft.CognitiveServices/accounts/eliLLM/overview
+eliLLM - ASC DEMO - 212f9889-769e-45ae-ab43-6da33674bd26
+
+
+LLM3: slavaopenai1: Rome-Protectors-AI-Playground
+https://oai.azure.com/portal/aa44da6b8d464331aa410b2efba86ba2/deployment?tenantid=72f988bf-86f1-41af-91ab-2d7cd011db47

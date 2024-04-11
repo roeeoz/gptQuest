@@ -6,7 +6,7 @@ import openai
 from azure.identity import DefaultAzureCredential
 from flask import Flask, Response, request, jsonify, send_from_directory
 from dotenv import load_dotenv
-
+import random
 from backend.auth.auth_utils import get_authenticated_user_details
 from backend.history.cosmosdbservice import CosmosConversationClient
 
@@ -49,6 +49,22 @@ AZURE_OPENAI_RESOURCE = os.environ.get("AZURE_OPENAI_RESOURCE", "copilotdev")
 AZURE_OPENAI_MODEL = os.environ.get("AZURE_OPENAI_MODEL", "gpt-35-turbo")
 AZURE_OPENAI_ENDPOINT = os.environ.get("AZURE_OPENAI_ENDPOINT", "https://copilotdev.openai.azure.com/")
 AZURE_OPENAI_KEY = os.environ.get("AZURE_OPENAI_KEY")
+
+OPENAI = [
+    {
+        'AZURE_OPENAI_ENDPOINT': AZURE_OPENAI_ENDPOINT, 
+        'AZURE_OPENAI_KEY': AZURE_OPENAI_KEY
+    },
+    {
+        'AZURE_OPENAI_ENDPOINT': os.environ.get("AOAI2", AZURE_OPENAI_ENDPOINT), 
+        'AZURE_OPENAI_KEY': os.environ.get("AOAI2_KEY", AZURE_OPENAI_KEY)
+    },
+    {
+        'AZURE_OPENAI_ENDPOINT': os.environ.get("AOAI3", AZURE_OPENAI_ENDPOINT), 
+        'AZURE_OPENAI_KEY': os.environ.get("AOAI3_KEY", AZURE_OPENAI_KEY)
+    }
+]
+
 AZURE_OPENAI_TEMPERATURE = os.environ.get("AZURE_OPENAI_TEMPERATURE", 0)
 AZURE_OPENAI_TOP_P = os.environ.get("AZURE_OPENAI_TOP_P", 1)
 AZURE_OPENAI_MAX_TOKENS = os.environ.get("AZURE_OPENAI_MAX_TOKENS", 1000)
@@ -236,7 +252,6 @@ def prepare_body_headers_with_data(request):
 
     headers = {
         'Content-Type': 'application/json',
-        'api-key': AZURE_OPENAI_KEY,
         "x-ms-useragent": "GitHubSampleWebApp/PublicAPI/2.0.0"
     }
 
@@ -284,10 +299,16 @@ def stream_with_data(body, headers, endpoint, history_metadata={}):
     except Exception as e:
         yield format_as_ndjson({"error": str(e)})
 
+def get_base_url_and_key():
+    aoai = random.choice(OPENAI)
+    base_url = aoai['AZURE_OPENAI_ENDPOINT'] if aoai['AZURE_OPENAI_ENDPOINT'] else f"https://{AZURE_OPENAI_RESOURCE}.openai.azure.com/"
+    print('base_url:', base_url)
+    return base_url, aoai['AZURE_OPENAI_KEY']
 
 def conversation_with_data(request_body):
     body, headers = prepare_body_headers_with_data(request)
-    base_url = AZURE_OPENAI_ENDPOINT if AZURE_OPENAI_ENDPOINT else f"https://{AZURE_OPENAI_RESOURCE}.openai.azure.com/"
+    base_url, aoai_key = get_base_url_and_key()
+    headers['api-key'] = aoai_key
     endpoint = f"{base_url}openai/deployments/{AZURE_OPENAI_MODEL}/extensions/chat/completions?api-version={AZURE_OPENAI_PREVIEW_API_VERSION}"
     history_metadata = request_body.get("history_metadata", {})
 
@@ -327,9 +348,8 @@ def stream_without_data(response, history_metadata={}):
 
 def conversation_without_data(request_body):
     openai.api_type = "azure"
-    openai.api_base = AZURE_OPENAI_ENDPOINT if AZURE_OPENAI_ENDPOINT else f"https://{AZURE_OPENAI_RESOURCE}.openai.azure.com/"
+    openai.api_base, openai.api_key = get_base_url_and_key()
     openai.api_version = "2023-03-15-preview"
-    openai.api_key = AZURE_OPENAI_KEY
 
     request_messages = request_body["messages"]
     messages = [
@@ -643,11 +663,9 @@ def generate_title(conversation_messages):
 
     try:
         ## Submit prompt to Chat Completions for response
-        base_url = AZURE_OPENAI_ENDPOINT if AZURE_OPENAI_ENDPOINT else f"https://{AZURE_OPENAI_RESOURCE}.openai.azure.com/"
         openai.api_type = "azure"
-        openai.api_base = base_url
+        openai.api_base, openai.api_key = get_base_url_and_key()
         openai.api_version = "2023-03-15-preview"
-        openai.api_key = AZURE_OPENAI_KEY
         completion = openai.ChatCompletion.create(    
             engine=AZURE_OPENAI_MODEL,
             messages=messages,
