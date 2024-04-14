@@ -62,6 +62,10 @@ OPENAI = [
     {
         'AZURE_OPENAI_ENDPOINT': os.environ.get("AOAI3", AZURE_OPENAI_ENDPOINT), 
         'AZURE_OPENAI_KEY': os.environ.get("AOAI3_KEY", AZURE_OPENAI_KEY)
+    },
+    {
+        'AZURE_OPENAI_ENDPOINT': os.environ.get("AOAI4", AZURE_OPENAI_ENDPOINT), 
+        'AZURE_OPENAI_KEY': os.environ.get("AOAI4_KEY", AZURE_OPENAI_KEY)
     }
 ]
 

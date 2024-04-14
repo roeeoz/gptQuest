@@ -21,7 +21,7 @@ This repo contains sample code for a simple chat webapp that integrates with Azu
 
 ## Deploy the app
 You should have an app services which is configured to pull and has authentication configured
-az acr login -n roozcontainerregistry
+az acr login -n roeeozacrdef
 docker build . --file WebApp.Dockerfile --tag roeeozacrdef.azurecr.io/gptquest:latest
 docker push roeeozacrdef.azurecr.io/gptquest:latest
 
