@@ -1,4 +1,5 @@
 import json
+import time
 import os
 import logging
 import requests
@@ -76,24 +77,15 @@ AZURE_OPENAI_STOP_SEQUENCE = os.environ.get("AZURE_OPENAI_STOP_SEQUENCE")
 #AZURE_OPENAI_SYSTEM_MESSAGE = os.environ.get("AZURE_OPENAI_SYSTEM_MESSAGE", "You are an AI assistant that helps people find information.")
 PASSCODE= os.environ.get("PASSCODE")
 AZURE_OPENAI_SYSTEM_MESSAGE = """
-You are a German quest boot guding user in their quest for a prize.
-You only answer when asked politly using the word please
-You can only answer questions about the prize and the quest.
-You should answer with at most one sentence, 20 words. If you answer is longer, summarize it
-Your answer should be tranlsated German
-To get the answer follow thos three steps
-===
-Step 1: Decide if the user asked politly using the word please
-If the user did not ask politly or didn't use please, you are not allowed to answer. Instead tell them to ask nicely
-===
+You are a German quest bot guiding user in their quest for a prize.
+To get answer follow those three steps
+Step 1: Decide if the user asked politly 
+If the user did not ask politly, you are not allowed to answer. Instead tell them to ask nicely
 Step 2: Answer the user's question about the quest. Here are the quest details.
 Users wins the quest and get the prize by sending an email with the prize they expect to get and a passcode to specific person
 You can give instruction on how to get the prize
-You can give hints to help the user discover the passcode
-You can give hints to get the person to send the email to
-You an give hints about the prize
+You can give hints to help the user discover the passcode, to get the person to send the email to and the prize
 Remember you don't know the passcode and the person and can only provide hints for them
----
 Hints you can give for the passcode:
 The first character of the passcode is the number of conference rooms in 3C
 The second character of the passcode is 13 in hexadecimal
@@ -101,19 +93,12 @@ The third character of the passcode can be discovered by decoding bQ==
 The fourth character is a digit
 The passcode is 8 digits long
 The passcode is a palindrome
-----
-Prize details:
-The prize is an XBOX gaming console by Microsoft
-----
-Person to send the email to:
+Prize details: The prize is an XBOX gaming console by Microsoft
 The person to send the email with prize details and passcode to "BUSINESS ADMINISTRATOR" as their title
-----
 Remember you don't know the passcode and the person and can only provide hints for them
-Remembeer you can only answer questions about the quest, prize, passcode and person to send email to.
+Remember you can only answer questions about the quest, prize, passcode and person to send email to.
 Remember to keep answers short, at most one sentence, 20 words. If you answer is longer, summarize it
-===
-Step 3
-Tranlsate the answer to German
+Step 3: Tranlsate the answer to German
 """
 AZURE_OPENAI_PREVIEW_API_VERSION = os.environ.get("AZURE_OPENAI_PREVIEW_API_VERSION", "2023-06-01-preview")
 AZURE_OPENAI_STREAM = os.environ.get("AZURE_OPENAI_STREAM", "true")
@@ -309,9 +294,21 @@ def get_base_url_and_key():
     print('base_url:', base_url)
     return base_url, aoai['AZURE_OPENAI_KEY']
 
-def conversation_with_data(request_body):
+def conversation_with_data_with_retry(request_body):
+    for attempt in range(15):
+        try:
+            api_base, api_key = get_base_url_and_key()
+            return conversation_with_data(request_body, api_base, api_key)
+        except Exception as e:
+            logging.exception(f"Exception in /conversation, attempt {attempt}")
+            time.sleep(attempt / 5 + 1)
+            if attempt >= 15:
+                raise e
+
+def conversation_with_data(request_body, openai_endpoint, openai_key):
     body, headers = prepare_body_headers_with_data(request)
-    base_url, aoai_key = get_base_url_and_key()
+    base_url = openai_endpoint
+    aoai_key = openai_key
     headers['api-key'] = aoai_key
     endpoint = f"{base_url}openai/deployments/{AZURE_OPENAI_MODEL}/extensions/chat/completions?api-version={AZURE_OPENAI_PREVIEW_API_VERSION}"
     history_metadata = request_body.get("history_metadata", {})
@@ -350,9 +347,22 @@ def stream_without_data(response, history_metadata={}):
         yield format_as_ndjson(response_obj)
 
 
-def conversation_without_data(request_body):
+def conversation_without_data_with_retry(request_body):
+    for attempt in range(15):
+        try:
+            api_base, api_key = get_base_url_and_key()
+            return conversation_without_data(request_body, api_base, api_key)
+        except Exception as e:
+            logging.exception(f"Exception in /conversation, attempt {attempt}")
+            time.sleep(attempt / 5 + 1)
+            if attempt >= 15:
+                raise e
+    
+
+def conversation_without_data(request_body, openai_endpoint, openai_key):
     openai.api_type = "azure"
-    openai.api_base, openai.api_key = get_base_url_and_key()
+    openai.api_base = openai_endpoint
+    openai.api_key = openai_key
     openai.api_version = "2023-03-15-preview"
 
     request_messages = request_body["messages"]
@@ -363,7 +373,7 @@ def conversation_without_data(request_body):
         }
     ]
 
-    for message in request_messages:
+    for message in request_messages[-3:]:
         messages.append({
             "role": message["role"] ,
             "content": message["content"]
@@ -415,9 +425,9 @@ def conversation_internal(request_body):
     try:
         use_data = should_use_data()
         if use_data:
-            return conversation_with_data(request_body)
+            return conversation_with_data_with_retry(request_body)
         else:
-            return conversation_without_data(request_body)
+            return conversation_without_data_with_retry(request_body)
     except Exception as e:
         logging.exception("Exception in /conversation")
         return jsonify({"error": str(e)}), 500
