@@ -22,8 +22,9 @@ This repo contains sample code for a simple chat webapp that integrates with Azu
 ## Deploy the app
 You should have an app services which is configured to pull and has authentication configured
 az acr login -n roozcontainerregistry
-docker build . --file WebApp.Dockerfile --tag roozcontainerregistry.azurecr.io/gptquest:latest
-docker push roozcontainerregistry.azurecr.io/gptquest:latest
+docker build . --file WebApp.Dockerfile --tag roeeozacrdef.azurecr.io/gptquest:latest
+docker push roeeozacrdef.azurecr.io/gptquest:latest
+
 
 ### Add an identity provider
 After deployment, you will need to add an identity provider to provide authentication support in your app. See [this tutorial](https://learn.microsoft.com/en-us/azure/app-service/scenario-secure-app-authentication-app-service) for more information.
